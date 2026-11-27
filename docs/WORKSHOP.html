@@ -1,0 +1,1864 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Python 3.14 &amp; Software Engineering Fundamentals Workshop</title>
+  <style>
+    :root {
+      --bg-page: #f6f8fa;
+      --bg-surface: #ffffff;
+      --bg-panel: #eef2f6;
+      --bg-subtle: #f1f5f9;
+      --bg-code: #eaf0f5;
+      --ink-primary: #12202f;
+      --ink-secondary: #36495d;
+      --ink-muted: #516579;
+      --accent: #14466e;
+      --accent-hover: #0e3352;
+      --accent-tint: #dce9f4;
+      --upstream-fill: #e5eef7;
+      --upstream-stroke: #2a5d8a;
+      --downstream-fill: #e7f2ec;
+      --downstream-stroke: #1f6b45;
+      --ok-ink: #185c37;
+      --ok-bg: #e3f3ea;
+      --ok-border: #96cbb0;
+      --warn-ink: #73430d;
+      --warn-bg: #faefd9;
+      --warn-border: #d9b679;
+      --border: #c8d4e0;
+      --border-strong: #9fb2c4;
+      --font-sans: "Segoe UI Variable Text", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: "Cascadia Code", "Consolas", "SFMono-Regular", ui-monospace, monospace;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    ::selection {
+      background: var(--accent);
+      color: #ffffff;
+    }
+
+    html {
+      font-size: 16px;
+      scroll-behavior: smooth;
+      caret-color: var(--accent);
+      scrollbar-color: var(--border-strong) var(--bg-panel);
+      scrollbar-width: thin;
+    }
+
+    ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-panel);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-strong);
+      border: 2px solid var(--bg-panel);
+      border-radius: 6px;
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--font-sans);
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--ink-primary);
+      background: var(--bg-page);
+      font-variant-numeric: tabular-nums;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      text-decoration-thickness: 1px;
+    }
+
+    a:hover {
+      color: var(--accent-hover);
+      text-decoration-thickness: 2px;
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .app-shell {
+      display: grid;
+      grid-template-columns: 17.5rem minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      background: var(--bg-panel);
+      border-right: 1px solid var(--border);
+      padding: 1.5rem 1.125rem;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .sidebar-title {
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: -0.015em;
+      margin: 0;
+      color: var(--ink-primary);
+      line-height: 1.3;
+    }
+
+    .sidebar-meta {
+      font-size: 0.8125rem;
+      color: var(--ink-secondary);
+      margin: 0.35rem 0 0;
+      line-height: 1.45;
+    }
+
+    .progress-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.75rem 0.875rem;
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--ink-secondary);
+      margin-bottom: 0.45rem;
+    }
+
+    .progress-track {
+      height: 6px;
+      background: var(--bg-panel);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 100%;
+      background: var(--accent);
+      transform-origin: left center;
+      transform: scaleX(0);
+      transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .nav-group-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--ink-muted);
+      margin: 0 0 0.35rem;
+      padding: 0 0.35rem;
+    }
+
+    .nav-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      padding: 0.375rem 0.5rem;
+      border-radius: 6px;
+      font-size: 0.8125rem;
+      text-decoration: none;
+      color: var(--ink-secondary);
+      border: 1px solid transparent;
+      transition: background-color 150ms ease, color 150ms ease;
+    }
+
+    .nav-link:hover {
+      background: var(--bg-surface);
+      color: var(--ink-primary);
+      text-decoration: none;
+    }
+
+    .nav-link.is-active {
+      background: var(--bg-surface);
+      border-color: var(--border);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .nav-gate-pill {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--ink-muted);
+      padding: 0.05rem 0.35rem;
+      border-radius: 4px;
+      background: var(--bg-panel);
+    }
+
+    .nav-gate-pill.is-complete {
+      background: var(--ok-bg);
+      color: var(--ok-ink);
+      font-weight: 600;
+    }
+
+    .main-content {
+      padding: 2.25rem 2.75rem 4rem;
+      max-width: 74rem;
+      width: 100%;
+    }
+
+    header.doc-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      font-size: 2rem;
+      line-height: 1.18;
+      letter-spacing: -0.025em;
+      margin: 0 0 0.75rem;
+      color: var(--ink-primary);
+      text-wrap: balance;
+    }
+
+    .lead {
+      font-size: 1.0625rem;
+      color: var(--ink-secondary);
+      max-width: 70ch;
+      margin: 0 0 1rem;
+    }
+
+    .spec-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.25rem;
+      font-size: 0.875rem;
+      color: var(--ink-secondary);
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.65rem 1rem;
+    }
+
+    .spec-strip strong {
+      color: var(--ink-primary);
+    }
+
+    h2 {
+      font-size: 1.4375rem;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+      margin: 2.75rem 0 0.85rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--border);
+      color: var(--ink-primary);
+    }
+
+    h3 {
+      font-size: 1.125rem;
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+      margin: 1.5rem 0 0.5rem;
+      color: var(--ink-primary);
+    }
+
+    p {
+      max-width: 70ch;
+      margin: 0 0 0.9rem;
+    }
+
+    code {
+      font-family: var(--font-mono);
+      font-size: 0.875em;
+      background: var(--bg-code);
+      padding: 0.12em 0.35em;
+      border-radius: 4px;
+      color: var(--ink-primary);
+    }
+
+    pre {
+      background: var(--bg-code);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.875rem 1rem;
+      overflow-x: auto;
+      margin: 0.75rem 0 1.25rem;
+      font-size: 0.875rem;
+      line-height: 1.5;
+    }
+
+    pre code {
+      background: none;
+      padding: 0;
+      font-size: inherit;
+    }
+
+    /* Interactive Graph Surface */
+    .graph-workspace {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin: 1rem 0 1.75rem;
+    }
+
+    .graph-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.875rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .graph-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.875rem;
+      font-size: 0.8125rem;
+      color: var(--ink-secondary);
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .legend-swatch {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+      border: 1px solid var(--border-strong);
+      display: inline-block;
+    }
+
+    .swatch-selected { background: var(--accent); border-color: var(--accent); }
+    .swatch-upstream { background: var(--upstream-fill); border-color: var(--upstream-stroke); }
+    .swatch-downstream { background: var(--downstream-fill); border-color: var(--downstream-stroke); }
+    .swatch-done { background: var(--ok-bg); border-color: var(--ok-ink); }
+
+    .btn {
+      appearance: none;
+      font-family: var(--font-sans);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--ink-primary);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 6px;
+      padding: 0.375rem 0.75rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+    }
+
+    .btn:hover {
+      background: var(--bg-panel);
+      border-color: var(--accent);
+    }
+
+    .btn:active {
+      background: var(--accent-tint);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #ffffff;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      border-color: var(--accent-hover);
+      color: #ffffff;
+    }
+
+    .graph-svg-wrap {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    svg.learning-dag {
+      width: 100%;
+      min-width: 780px;
+      height: auto;
+      display: block;
+    }
+
+    .dag-layer-band {
+      fill: var(--bg-subtle);
+      stroke: var(--border);
+      stroke-width: 1;
+      rx: 8;
+    }
+
+    .dag-layer-label {
+      font-family: var(--font-sans);
+      font-size: 12px;
+      font-weight: 700;
+      fill: var(--ink-secondary);
+    }
+
+    .dag-edge {
+      fill: none;
+      stroke: #9cb0c3;
+      stroke-width: 1.5;
+      transition: stroke 160ms ease, opacity 160ms ease;
+    }
+
+    .dag-edge.is-dimmed {
+      opacity: 0.2;
+    }
+
+    .dag-edge.is-upstream {
+      stroke: var(--upstream-stroke);
+      stroke-width: 2.4;
+    }
+
+    .dag-edge.is-downstream {
+      stroke: var(--downstream-stroke);
+      stroke-width: 2.4;
+    }
+
+    .dag-node {
+      cursor: pointer;
+      transition: opacity 160ms ease;
+    }
+
+    .dag-node.is-dimmed {
+      opacity: 0.32;
+    }
+
+    .dag-node rect.node-box {
+      fill: #ffffff;
+      stroke: var(--border-strong);
+      stroke-width: 1.5;
+      rx: 8;
+      transition: fill 160ms ease, stroke 160ms ease;
+    }
+
+    .dag-node:hover rect.node-box {
+      stroke: var(--accent);
+    }
+
+    .dag-node.is-complete rect.node-box {
+      fill: var(--ok-bg);
+      stroke: var(--ok-ink);
+    }
+
+    .dag-node.is-upstream rect.node-box {
+      fill: var(--upstream-fill);
+      stroke: var(--upstream-stroke);
+      stroke-width: 2;
+    }
+
+    .dag-node.is-downstream rect.node-box {
+      fill: var(--downstream-fill);
+      stroke: var(--downstream-stroke);
+      stroke-width: 2;
+    }
+
+    .dag-node.is-selected rect.node-box {
+      fill: var(--accent);
+      stroke: var(--accent);
+      stroke-width: 2;
+    }
+
+    .dag-node text.node-code {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      fill: var(--accent);
+    }
+
+    .dag-node text.node-title {
+      font-family: var(--font-sans);
+      font-size: 12.5px;
+      font-weight: 700;
+      fill: var(--ink-primary);
+    }
+
+    .dag-node text.node-sub {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      fill: var(--ink-secondary);
+    }
+
+    .dag-node.is-selected text.node-code,
+    .dag-node.is-selected text.node-title,
+    .dag-node.is-selected text.node-sub {
+      fill: #ffffff;
+    }
+
+    .inspector-bar {
+      margin-top: 0.875rem;
+      padding-top: 0.875rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.875rem;
+    }
+
+    .inspector-details {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      max-width: 54rem;
+    }
+
+    .inspector-chains {
+      font-size: 0.8125rem;
+      color: var(--ink-secondary);
+    }
+
+    /* Tables */
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.75rem;
+      margin: 1rem 0 1.75rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+
+    th, td {
+      padding: 0.625rem 0.8rem;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--border);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    th {
+      background: var(--bg-panel);
+      color: var(--ink-primary);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .roi-badge {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      background: var(--accent-tint);
+      color: var(--accent);
+      white-space: nowrap;
+    }
+
+    /* Filter Toolbar */
+    .filter-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.625rem;
+      align-items: center;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.75rem 0.875rem;
+      margin: 1rem 0 1.25rem;
+    }
+
+    .filter-group {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+    }
+
+    .filter-chip {
+      appearance: none;
+      font-family: var(--font-sans);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      padding: 0.3rem 0.65rem;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--bg-page);
+      color: var(--ink-secondary);
+      cursor: pointer;
+      transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+    }
+
+    .filter-chip:hover {
+      border-color: var(--accent);
+      color: var(--ink-primary);
+    }
+
+    .filter-chip[aria-pressed="true"] {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #ffffff;
+    }
+
+    .search-input {
+      font-family: var(--font-sans);
+      font-size: 0.875rem;
+      padding: 0.35rem 0.65rem;
+      border: 1px solid var(--border-strong);
+      border-radius: 6px;
+      background: var(--bg-surface);
+      color: var(--ink-primary);
+      min-width: 15rem;
+      margin-left: auto;
+    }
+
+    .search-input::placeholder {
+      color: var(--ink-muted);
+    }
+
+    .empty-state {
+      display: none;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.5rem;
+      color: var(--ink-secondary);
+      font-size: 0.9375rem;
+    }
+
+    .empty-state.is-visible {
+      display: block;
+    }
+
+    /* Module Sections */
+    .module-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    article.module-section {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      scroll-margin-top: 1.25rem;
+    }
+
+    article.module-section.is-highlighted {
+      border-color: var(--accent);
+    }
+
+    .module-top {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding-bottom: 0.875rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1rem;
+    }
+
+    .module-heading {
+      margin: 0;
+      border: none;
+      padding: 0;
+      font-size: 1.25rem;
+      line-height: 1.3;
+    }
+
+    .module-meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      margin-top: 0.4rem;
+      font-size: 0.8125rem;
+      color: var(--ink-secondary);
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 0.1rem 0.45rem;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      background: var(--bg-page);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--ink-secondary);
+    }
+
+    .module-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .phase-pane {
+      background: var(--bg-page);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.95rem 1.05rem;
+    }
+
+    .phase-pane h4 {
+      margin: 0 0 0.45rem;
+      font-size: 0.9375rem;
+      color: var(--ink-primary);
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 0.5rem;
+    }
+
+    .phase-time {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .phase-pane p, .phase-pane ul {
+      font-size: 0.875rem;
+      margin: 0 0 0.5rem;
+      color: var(--ink-secondary);
+    }
+
+    .phase-pane ul {
+      padding-left: 1.15rem;
+    }
+
+    .phase-pane li {
+      margin-bottom: 0.3rem;
+    }
+
+    .eval-box {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.1rem;
+    }
+
+    .eval-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.65rem;
+    }
+
+    .eval-header h4 {
+      margin: 0;
+      font-size: 0.9375rem;
+      color: var(--ink-primary);
+    }
+
+    .cmd-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .gate-checklist {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(13.5rem, 1fr));
+      gap: 0.5rem;
+      margin-top: 0.65rem;
+    }
+
+    .gate-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.5rem 0.65rem;
+      font-size: 0.8125rem;
+      color: var(--ink-secondary);
+      cursor: pointer;
+    }
+
+    .gate-item:hover {
+      border-color: var(--accent);
+    }
+
+    .gate-item input[type="checkbox"] {
+      margin-top: 0.18rem;
+      accent-color: var(--accent);
+      width: 15px;
+      height: 15px;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+
+    .gate-item.is-checked {
+      background: var(--ok-bg);
+      border-color: var(--ok-border);
+      color: var(--ok-ink);
+    }
+
+    .honesty-note {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.15rem 1.25rem;
+      margin-top: 1rem;
+    }
+
+    @media (max-width: 1024px) {
+      .app-shell {
+        grid-template-columns: 1fr;
+      }
+      .sidebar {
+        position: static;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+      .main-content {
+        padding: 1.5rem 1.25rem 3rem;
+      }
+      .module-grid {
+        grid-template-columns: 1fr;
+      }
+      .search-input {
+        margin-left: 0;
+        width: 100%;
+      }
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+        color: #000000;
+        font-size: 10pt;
+        line-height: 1.38;
+      }
+      .sidebar, .filter-toolbar, .btn {
+        display: none !important;
+      }
+      .app-shell {
+        display: block;
+      }
+      .main-content {
+        max-width: none;
+        padding: 0;
+      }
+      article.module-section, .graph-workspace, .table-wrap {
+        break-inside: avoid;
+        border-color: #999999;
+      }
+      pre {
+        white-space: pre-wrap;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Workshop navigation">
+      <div>
+        <p class="sidebar-title">Python 3.14 &amp; SE Fundamentals</p>
+        <p class="sidebar-meta">12-module AI-era field workshop on the <code>taskledger</code> spine.</p>
+      </div>
+
+      <div class="progress-box">
+        <div class="progress-header">
+          <span>Evaluation Gates</span>
+          <span id="overall-progress-label">0 / 60 passed</span>
+        </div>
+        <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="60" aria-valuenow="0" id="overall-progressbar">
+          <div class="progress-fill" id="overall-progress-fill"></div>
+        </div>
+      </div>
+
+      <div>
+        <p class="nav-group-title">Sections</p>
+        <ul class="nav-list">
+          <li><a class="nav-link" href="#roi-matrix">1. 80/20 AI Time-ROI Matrix</a></li>
+          <li><a class="nav-link" href="#learning-graph">2. 12-Node Learning Graph</a></li>
+          <li><a class="nav-link" href="#desk-setup">3. Desk Setup &amp; 5-Stage Gate</a></li>
+          <li><a class="nav-link" href="#modules">4. Modules M01–M12</a></li>
+          <li><a class="nav-link" href="#honesty-notes">5. Honesty Notes &amp; Limits</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <p class="nav-group-title">Module Checkpoints</p>
+        <ul class="nav-list" id="sidebar-module-nav"></ul>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="doc-header">
+        <h1>Python 3.14 &amp; Software Engineering Fundamentals in the AI Era</h1>
+        <p class="lead">
+          Coding agents make syntax, glue code, and scaffolding cheap. What still compounds—and breaks silently when delegated blindly—are object mutability laws, asymptotic data structures, explicit domain invariants, strict structural typing, deterministic resource cleanup, structured concurrency, ACID idempotency, and trust boundaries.
+        </p>
+        <div class="spec-strip">
+          <span><strong>Repo:</strong> <code>xavierxmorris/python-se-fundamentals-lab</code></span>
+          <span><strong>Toolchain:</strong> CPython 3.14 &middot; <code>uv</code> &middot; <code>pytest</code> &middot; <code>pyright --strict</code> &middot; <code>ruff</code> &middot; <code>hypothesis</code></span>
+          <span><strong>Block Size:</strong> 60–90 mins &times; 12 modules</span>
+        </div>
+      </header>
+
+      <section id="roi-matrix">
+        <h2>1. Where to Spend Your Brainpower: The 80/20 Human-vs-AI Matrix</h2>
+        <p>
+          Each 60–90 minute lab splits deliberate practice into <strong>Phase A (Cold-Turkey Core, AI OFF)</strong> to build unshakeable mental models, and <strong>Phase B (Spec-First AI Pair)</strong> where you hand-write strict <code>Protocol</code>s, invariants, and adversarial tests to constrain and audit AI-generated adapters.
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Module</th>
+                <th>Time-ROI Split</th>
+                <th>Plausible Defect AI Introduces</th>
+                <th>Low-ROI Trivia to Stop Memorizing</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>M01 &middot; Object Model &amp; Hashing</strong></td>
+                <td><span class="roi-badge">85% Cold / 15% AI</span></td>
+                <td>Shallow-copies nested dicts on <code>frozen=True</code> dataclasses; breaks <code>__eq__</code>/<code>__hash__</code> law.</td>
+                <td>Obscure metaclass/<code>__prepare__</code> dunder mechanics.</td>
+              </tr>
+              <tr>
+                <td><strong>M02 &middot; Collections &amp; Complexity</strong></td>
+                <td><span class="roi-badge">80% Cold / 20% AI</span></td>
+                <td>Uses <code>list.pop(0)</code> ($O(n)$), nested $O(n^2)$ joins, or unorderable <code>heapq</code> tie tuples.</td>
+                <td>Hand-rolling balanced trees or textbook sort algorithms.</td>
+              </tr>
+              <tr>
+                <td><strong>M03 &middot; Domain Invariants</strong></td>
+                <td><span class="roi-badge">90% Cold / 10% AI</span></td>
+                <td>Models state with 5 nullable fields allowing impossible combinations like <code>succeeded + error</code>.</td>
+                <td>Complex regex lookbehind syntax (specify test vectors instead).</td>
+              </tr>
+              <tr>
+                <td><strong>M04 &middot; Static Typing (3.14)</strong></td>
+                <td><span class="roi-badge">75% Cold / 25% AI</span></td>
+                <td>Sprinkles <code>Any</code>, <code>cast()</code>, or misses union variants instead of exhaustive <code>assert_never</code>.</td>
+                <td>Legacy pre-3.10 <code>TypeVar</code> / <code>Optional</code> boilerplate.</td>
+              </tr>
+              <tr>
+                <td><strong>M05 &middot; Lifecycles &amp; Generators</strong></td>
+                <td><span class="roi-badge">80% Cold / 20% AI</span></td>
+                <td>Eagerly loads huge streams; leaks resource #1 when resource #2 raises without <code>ExitStack</code>.</td>
+                <td>Obscure <code>itertools</code> recipes verifiable in 10s via REPL.</td>
+              </tr>
+              <tr>
+                <td><strong>M06 &middot; Modular Architecture</strong></td>
+                <td><span class="roi-badge">85% Cold / 15% AI</span></td>
+                <td>Mixes <code>time.time()</code>, <code>sleep()</code>, SQL, and retry math inside one untestable method.</td>
+                <td>Gang-of-Four ceremony; prioritize Functional Core / Imperative Shell.</td>
+              </tr>
+              <tr>
+                <td><strong>M07 &middot; Verification &amp; Hypothesis</strong></td>
+                <td><span class="roi-badge">75% Cold / 25% AI</span></td>
+                <td>Writes tautological <code>MagicMock</code> assertions; misses delimiter collisions like <code>"a:b" + "c"</code>.</td>
+                <td>Repetitive pytest fixture scaffolding after designing the property.</td>
+              </tr>
+              <tr>
+                <td><strong>M08 &middot; Structured Concurrency</strong></td>
+                <td><span class="roi-badge">85% Cold / 15% AI</span></td>
+                <td>Orphans tasks via bare <code>create_task</code>, swallows <code>CancelledError</code>, or blocks the event loop.</td>
+                <td>OS selector socket internals.</td>
+              </tr>
+              <tr>
+                <td><strong>M09 &middot; Transactions &amp; Idempotency</strong></td>
+                <td><span class="roi-badge">90% Cold / 10% AI</span></td>
+                <td>Runs check-then-insert outside <code>BEGIN IMMEDIATE</code>; re-executes side effects on duplicate retry.</td>
+                <td>Cross-vendor SQL DDL trivia.</td>
+              </tr>
+              <tr>
+                <td><strong>M10 &middot; Packaging, Profiling &amp; OTel</strong></td>
+                <td><span class="roi-badge">60% Cold / 40% AI</span></td>
+                <td>Stores active span on <code>self</code> instead of <code>ContextVar</code>, scrambling concurrent async traces.</td>
+                <td><code>pyproject.toml</code> wheel/exporter config boilerplate.</td>
+              </tr>
+              <tr>
+                <td><strong>M11 &middot; Security &amp; Trust Gates</strong></td>
+                <td><span class="roi-badge">85% Cold / 15% AI</span></td>
+                <td>Uses <code>startswith</code> / <code>commonprefix</code> path checks, <code>shell=True</code>, or unbounded JSON decode.</td>
+                <td>CVE catalog trivia; enforce structural confinement at boundaries.</td>
+              </tr>
+              <tr>
+                <td><strong>M12 &middot; Debugging &amp; Audit Capstone</strong></td>
+                <td><span class="roi-badge">90% Cold / 10% AI</span></td>
+                <td>Piles symptom patches onto multi-layer async + SQLite bugs instead of isolating root causes.</td>
+                <td>Ad-hoc log slicing scripts once you define the falsifiable hypothesis.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="learning-graph">
+        <h2>2. Interactive 12-Node Dependency Learning Graph</h2>
+        <p>
+          Select any node below to trace its <strong>upstream prerequisites</strong> (what you need solid first) and <strong>downstream unlocks</strong> (what depends on it), or jump straight to its 60–90 minute lab guide.
+        </p>
+
+        <div class="graph-workspace">
+          <div class="graph-toolbar">
+            <div class="graph-legend" aria-label="Graph color legend">
+              <span class="legend-item"><span class="legend-swatch swatch-selected"></span>Selected node</span>
+              <span class="legend-item"><span class="legend-swatch swatch-upstream"></span>Prerequisites (upstream)</span>
+              <span class="legend-item"><span class="legend-swatch swatch-downstream"></span>Unlocks (downstream)</span>
+              <span class="legend-item"><span class="legend-swatch swatch-done"></span>All 5 gates passed</span>
+            </div>
+            <div>
+              <button type="button" class="btn" id="reset-graph-btn">Show Full Graph</button>
+            </div>
+          </div>
+
+          <div class="graph-svg-wrap">
+            <svg class="learning-dag" viewBox="0 0 960 450" role="img" aria-label="12-node dependency graph from Layer 1 foundations through Layer 3 production systems">
+              <defs>
+                <marker id="arrow-default" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#9cb0c3"></path>
+                </marker>
+                <marker id="arrow-upstream" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#2a5d8a"></path>
+                </marker>
+                <marker id="arrow-downstream" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#1f6b45"></path>
+                </marker>
+              </defs>
+
+              <!-- Layer Bands -->
+              <rect class="dag-layer-band" x="12" y="12" width="936" height="114"></rect>
+              <text class="dag-layer-label" x="26" y="32">Layer 1 &middot; Core Mental Models (Cold-Turkey Foundations)</text>
+
+              <rect class="dag-layer-band" x="12" y="152" width="936" height="114"></rect>
+              <text class="dag-layer-label" x="26" y="172">Layer 2 &middot; Contracts, Lifecycles &amp; Modular Architecture</text>
+
+              <rect class="dag-layer-band" x="12" y="292" width="936" height="144"></rect>
+              <text class="dag-layer-label" x="26" y="312">Layer 3 &middot; Concurrency, Durable State, Observability &amp; Security</text>
+
+              <!-- Edges container -->
+              <g id="dag-edges"></g>
+              <!-- Nodes container -->
+              <g id="dag-nodes"></g>
+            </svg>
+          </div>
+
+          <div class="inspector-bar" id="graph-inspector">
+            <div class="inspector-details">
+              <strong id="inspector-title">Click any node in the graph to inspect its dependency chain.</strong>
+              <span class="inspector-chains" id="inspector-summary">All 12 modules share the decoupled <code>taskledger</code> domain so you can run M01&rarr;M12 sequentially or target specific weak spots.</span>
+            </div>
+            <a class="btn btn-primary" id="inspector-jump" href="#m01">Jump to M01 Lab</a>
+          </div>
+        </div>
+      </section>
+
+      <section id="desk-setup">
+        <h2>3. Reproducible Desk Setup &amp; 5-Stage Evaluation Protocol</h2>
+        <p>
+          Every module runs locally on CPython 3.14 without API keys, cloud accounts, or external services. Untouched starter modules intentionally fail Gates 3–4 until you implement the core invariants and write tests strong enough to kill every seeded mutant.
+        </p>
+        <pre><code>cd C:\Users\xaviermorris\Documents\python-se-fundamentals-lab
+uv sync
+.\go.ps1 -Check          # Verifies starter sanity + runs all 12 reference solutions through Gates 1-5
+.\go.ps1 -Module m01     # Evaluates your working code in labs/m01_object_model</code></pre>
+        <p>
+          <strong>Strict Rules of Engagement:</strong> During <strong>Drill A (35 mins)</strong>, disable Copilot inline completions and chat—use only Python docs, <code>pyright</code>, and <code>pytest</code>. During <strong>Drill B (25 mins)</strong>, write the <code>Protocol</code>/type contract and failing regression tests by hand <em>first</em>, then use Copilot to refactor the flawed adapter and audit every line of its diff. Only open <code>solutions/</code> after all 5 gates pass or after 20 minutes of written hypothesis isolation.
+        </p>
+      </section>
+
+      <section id="modules">
+        <h2>4. Focused Practice Modules &amp; Step-by-Step Evaluation Guides</h2>
+
+        <div class="filter-toolbar" role="region" aria-label="Filter workshop modules">
+          <div class="filter-group" role="group" aria-label="Filter by layer">
+            <button type="button" class="filter-chip" data-filter="all" aria-pressed="true">All 12 Modules</button>
+            <button type="button" class="filter-chip" data-filter="L1" aria-pressed="false">Layer 1: Core</button>
+            <button type="button" class="filter-chip" data-filter="L2" aria-pressed="false">Layer 2: Contracts</button>
+            <button type="button" class="filter-chip" data-filter="L3" aria-pressed="false">Layer 3: Production</button>
+            <button type="button" class="filter-chip" data-filter="remaining" aria-pressed="false">Remaining Only</button>
+          </div>
+          <input type="search" class="search-input" id="module-search" placeholder="Search concepts (TaskGroup, ExitStack, SQLite...)" aria-label="Search modules">
+        </div>
+
+        <div class="empty-state" id="empty-filter-state">
+          <p style="margin:0 0 0.5rem;"><strong>No modules match the active filter and search query.</strong></p>
+          <button type="button" class="btn" id="clear-filters-btn">Reset Filters</button>
+        </div>
+
+        <div class="module-list" id="module-cards-container"></div>
+      </section>
+
+      <section id="honesty-notes">
+        <h2>5. Honesty Notes &amp; Explicit Scope Boundaries</h2>
+        <div class="honesty-note">
+          <p>
+            <strong>What passing all 60 gates proves:</strong> You can design alias-free, hash-consistent Python value types (<code>M01</code>), pick $O(1)$/$O(\log n)$ collections with bounded memory (<code>M02</code>), encode state machines that make illegal transitions unrepresentable (<code>M03</code>), write strict PEP 695 generics, <code>Protocol</code>s, and <code>TypeIs</code> guards without <code>Any</code> escape hatches (<code>M04</code>), stream data lazily with <code>ExitStack</code> &amp; <code>ExceptionGroup</code> safety (<code>M05</code>), isolate pure functional cores from imperative shells (<code>M06</code>), prove invariants with <code>Hypothesis</code> and golden masters (<code>M07</code>), coordinate bounded <code>asyncio.TaskGroup</code> workloads without leaked tasks (<code>M08</code>), serialize SQLite state transitions with <code>BEGIN IMMEDIATE</code> and lease fencing tokens (<code>M09</code>), propagate <code>ContextVar</code> spans cleanly across async tasks (<code>M10</code>), confine untrusted paths, URLs, and tool outputs (<code>M11</code>), and run hypothesis-driven root-cause analysis across layers (<code>M12</code>).
+          </p>
+          <p style="margin-bottom:0;">
+            <strong>What remains outside single-node lab scope:</strong> Local SQLite <code>BEGIN IMMEDIATE</code> serialization does not model multi-node distributed network partitions, Postgres MVCC read-skew/write-skew anomalies, container OOM kills, or live Entra/OAuth token federation. Nail these single-process fundamentals first so distributed failure modes are never confounded with preventable local bugs.
+          </p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    (function () {
+      const STORAGE_KEY = "py_se_fundamentals_gates_v1";
+
+      const MODULES = [
+        {
+          id: "m01",
+          code: "M01",
+          navLabel: "Object Model",
+          graphTitle: "Object Model & Hashing",
+          slug: "m01_object_model",
+          layer: "L1",
+          title: "Object Model, Mutability, Aliasing & Hashing",
+          shortSub: "aliasing · freeze · eq/hash",
+          roi: "85% Cold / 15% Spec-AI",
+          x: 60, y: 44, w: 250, h: 68,
+          prereqs: [],
+          foundation: "Variables bind to object references, not boxes. @dataclass(frozen=True) blocks attribute rebinding but leaves nested dicts/lists mutable. Hashable objects must never mutate fields participating in __eq__, and equal objects must share identical hashes regardless of dict key insertion order.",
+          skip: "Custom metaclasses and C-level descriptor slot internals.",
+          drillA: [
+            "Implement recursive freeze_value() converting nested dicts/lists/sets into immutable hashable structures and rejecting arbitrary mutable objects with TypeError.",
+            "Build immutable TaskSpec(task_id, tenant, tool_name, payload, tags) with slots=True so mutating caller inputs or spec.to_payload_dict() never alters stored state.",
+            "Write test_learner_a.py to kill all 4 seeded bugs: shallow dict copy, aliased to_payload_dict() return, key/tag order hash mismatch, and dynamic attribute injection."
+          ],
+          drillB: [
+            "Audit RunContextBatcher in drill_b_ai_adapter.py: shared mutable default metadata={}, string identity 'is' comparison bug, and in-place caller retry list mutation.",
+            "Write strict type signatures and failing aliasing regression tests first, then refactor with AI."
+          ],
+          evalCmd: ".\\go.ps1 -Module m01",
+          gate5: "Verifies TaskSpec has __slots__ (no __dict__), survives nested caller mutation, and preserves set/dict hash equality under permuted nested keys."
+        },
+        {
+          id: "m02",
+          code: "M02",
+          navLabel: "Collections",
+          graphTitle: "Collections & Complexity",
+          slug: "m02_collections_complexity",
+          layer: "L1",
+          title: "Collections, Complexity & Memory Layout",
+          shortSub: "deque · heapq · bisect · slots",
+          roi: "80% Cold / 20% Spec-AI",
+          x: 355, y: 44, w: 250, h: 68,
+          prereqs: ["m01"],
+          foundation: "list.pop(0) is O(n); collections.deque is O(1) at both ends with C-level maxlen eviction. heapq needs a monotonic tie-breaker (priority, seq, item) so equal priorities preserve FIFO without comparing unorderable items. bisect classifies sorted thresholds in O(log k).",
+          skip: "Implementing textbook red-black trees or sorting algorithms from scratch.",
+          drillA: [
+            "Build PriorityReadyQueue[T] using heapq with FIFO tie-breaking for unorderable payloads.",
+            "Build O(1) amortized SlidingWindowQuota per tenant using deque and SlaBucketTable using bisect.",
+            "Kill seeded bugs: missing heap tie-breaker crash, window boundary off-by-one, and bisect_left vs bisect_right mismatch."
+          ],
+          drillB: [
+            "Audit AuditLogCorrelator: replace AI's O(n^2) nested list scan and unbounded history list with O(1) dict indexing and bounded deque(maxlen=...).",
+            "Write scaling + eviction contract tests before refactoring."
+          ],
+          evalCmd: ".\\go.ps1 -Module m02",
+          gate5: "Streams 25,000 correlation events under wall-clock + tracemalloc heap budget and verifies CompactEvent uses slots."
+        },
+        {
+          id: "m03",
+          code: "M03",
+          navLabel: "Domain Invariants",
+          graphTitle: "Domain Invariants",
+          slug: "m03_domain_invariants",
+          layer: "L1",
+          title: "Domain Modeling & Parse-Don't-Validate",
+          shortSub: "state machines · boundary types",
+          roi: "90% Cold / 10% Spec-AI",
+          x: 650, y: 44, w: 268, h: 68,
+          prereqs: ["m01"],
+          foundation: "Parse untrusted strings/dicts once at the edge into validated value objects (TaskId, TenantId, UtcDate) so core code never re-validates. Model task lifecycles with distinct state records (QueuedTask, LeasedTask, SucceededTask, DeadLetterTask) instead of nullable status flags.",
+          skip: "Memorizing complex PCRE lookarounds—encode positive and negative boundary vectors instead.",
+          drillA: [
+            "Implement TaskId, TenantId, and strict calendar UtcDate parsers raising typed DomainValidationError (never bare assert).",
+            "Implement deterministic transitions Queued -> Leased -> Succeeded | Queued (retry) | DeadLetter with active lease_token fencing.",
+            "Kill seeded bugs: stale lease acceptance, terminal-state resurrection, off-by-one max_attempts, and invalid calendar date bypass."
+          ],
+          drillB: [
+            "Harden PolicyWindowResolver: fix string-slice date bugs, detect overlapping [effective_from, effective_until) intervals, and return explicit NoActivePolicy on gaps.",
+            "Write cutover-day (June 30 vs July 1) boundary tests first."
+          ],
+          evalCmd: ".\\go.ps1 -Module m03",
+          gate5: "Verifies validation still enforces under Python -O optimization (zero reliance on assert) and half-open interval cutovers are exact."
+        },
+        {
+          id: "m04",
+          code: "M04",
+          navLabel: "Static Typing",
+          graphTitle: "Python 3.14 Typing",
+          slug: "m04_static_typing",
+          layer: "L2",
+          title: "Python 3.14 Static Typing & Protocols",
+          shortSub: "PEP 695 · Protocol · TypeIs",
+          roi: "75% Cold / 25% Spec-AI",
+          x: 40, y: 184, w: 215, h: 68,
+          prereqs: ["m03"],
+          foundation: "PEP 695 generics (class Ok[T], type Result[T, E]), structural typing.Protocol, Literal discriminated unions with match + assert_never, and PEP 742 TypeIs narrowing turn pyright --strict into an instant compiler gate for both you and coding agents.",
+          skip: "Legacy typing.List/Optional/TypeVar ceremony from Python 3.8.",
+          drillA: [
+            "Implement generic Ok[T], Err[E], Result[T, E], TypeIs guard is_ok(), map_ok(), and and_then() with zero Any or cast.",
+            "Define structural ToolPlugin[InT, OutT] Protocol and exhaustive summarize_event() over discriminated TaskEvent unions.",
+            "Kill seeded bugs in runtime behavior and narrowing edge cases."
+          ],
+          drillB: [
+            "Eliminate all dict[str, Any] holes and unhandled 'cancelled' event None-leaks in drill_b_ai_adapter.py.",
+            "Write strict TypedDict/Protocol boundaries first so pyright --strict flags every defect."
+          ],
+          evalCmd: ".\\go.ps1 -Module m04",
+          gate5: "AST audit bans Any, typing.cast, and '# type: ignore' across your module while requiring pyright --strict 0 errors."
+        },
+        {
+          id: "m05",
+          code: "M05",
+          navLabel: "Lifecycles",
+          graphTitle: "Generators & ExitStack",
+          slug: "m05_lifecycles_generators",
+          layer: "L2",
+          title: "Generators, ExitStack & ExceptionGroup",
+          shortSub: "yield · ExitStack · except*",
+          roi: "80% Cold / 20% Spec-AI",
+          x: 272, y: 184, w: 215, h: 68,
+          prereqs: ["m01"],
+          foundation: "Generators yield O(1)-memory lazy streams. Dynamic multi-resource acquisition requires contextlib.ExitStack so partial __enter__ failures unwind already-acquired resources in LIFO order. Simultaneous teardown errors belong in ExceptionGroup handled via except*.",
+          skip: "Obscure itertools combinations you can check in 10 seconds.",
+          drillA: [
+            "Write lazy iter_valid_records() chaining corrupt JSON lines via 'raise CorruptRecordError(...) from exc'.",
+            "Build acquire_workspace_lease() with ExitStack guaranteeing LIFO rollback on partial acquisition failure.",
+            "Implement run_cleanup_hooks() aggregating multiple teardown exceptions into ExceptionGroup."
+          ],
+          drillB: [
+            "Fix BatchArchiveExporter: close leaked temp spool handles via ExitStack and replace broken exception catching with selective except*.",
+            "Write deterministic handle-leak spy tests before editing."
+          ],
+          evalCmd: ".\\go.ps1 -Module m05",
+          gate5: "Streams 100,000 JSONL lines under tracemalloc (<1 MiB peak heap) and verifies __cause__ chaining + LIFO teardown order."
+        },
+        {
+          id: "m06",
+          code: "M06",
+          navLabel: "Architecture",
+          graphTitle: "Functional Core / Shell",
+          slug: "m06_modular_architecture",
+          layer: "L2",
+          title: "Deep Modules & Functional Core / Shell",
+          shortSub: "pure planner · narrow ports",
+          roi: "85% Cold / 15% Spec-AI",
+          x: 504, y: 184, w: 215, h: 68,
+          prereqs: ["m02", "m04"],
+          foundation: "Separate pure deterministic decision logic (Functional Core: explicit timestamp, attempt history, jitter ratio -> PlanDecision value) from side-effecting infrastructure (Imperative Shell: ClockPort, LedgerPort). Deep modules expose small interfaces while hiding rich policy rules.",
+          skip: "Heavyweight dependency-injection frameworks and abstract factory hierarchies.",
+          drillA: [
+            "Implement pure decide_next_action() covering capped exponential backoff, deterministic jitter, and closed/open/half-open circuit-breaker transitions.",
+            "Wire thin DispatcherShell over narrow ClockPort and LedgerPort Protocols with zero global state.",
+            "Test every backoff and circuit transition in <5ms with zero sleep() or monkeypatch."
+          ],
+          drillB: [
+            "Refactor tangled SpaghettiDispatcher (time.time, time.sleep, os.getenv, module-global _FAILURES) into pure core + thin shell.",
+            "Write port Protocols and deterministic fake-clock tests first."
+          ],
+          evalCmd: ".\\go.ps1 -Module m06",
+          gate5: "AST check forbids time, random, os, sqlite3, socket, and subprocess imports inside pure core decision logic."
+        },
+        {
+          id: "m07",
+          code: "M07",
+          navLabel: "Verification",
+          graphTitle: "Fakes & Hypothesis",
+          slug: "m07_verification_harnesses",
+          layer: "L2",
+          title: "Verification: Fakes, Golden Masters & Hypothesis",
+          shortSub: "property tests · parity suites",
+          roi: "75% Cold / 25% Spec-AI",
+          x: 736, y: 184, w: 200, h: 68,
+          prereqs: ["m03", "m06"],
+          foundation: "MagicMock tests often mirror buggy assumptions. Contract-tested in-memory fakes, frozen golden-master parity corpora, and Hypothesis @given property-based shrinking uncover Unicode, float-drift, key-ordering, and delimiter-collision bugs automatically.",
+          skip: "Memorizing mock assertion variants when a 20-line deterministic fake is clearer.",
+          drillA: [
+            "Implement canonical lossless encode_envelope()/decode_envelope() and collision-free length-framed canonical_digest().",
+            "Write real @hypothesis.given property tests proving round-trip identity, key-order canonicalism, and zero delimiter collisions (e.g. 'a:b'+'c' vs 'a'+'b:c')."
+          ],
+          drillB: [
+            "Build a golden-master parity harness + shared StorageContractSuite catching Decimal/float rounding drift and sort instability in AI's refactored reconciler."
+          ],
+          evalCmd: ".\\go.ps1 -Module m07",
+          gate5: "Verifies genuine @given Hypothesis execution (>=100 generated examples) and 100% kill rate on delimiter-collision and Unicode mutants."
+        },
+        {
+          id: "m08",
+          code: "M08",
+          navLabel: "Concurrency",
+          graphTitle: "Structured Asyncio",
+          slug: "m08_structured_concurrency",
+          layer: "L3",
+          title: "Structured Concurrency & Asyncio",
+          shortSub: "TaskGroup · cancel · Semaphore",
+          roi: "85% Cold / 15% Spec-AI",
+          x: 28, y: 334, w: 174, h: 84,
+          prereqs: ["m05"],
+          foundation: "asyncio.TaskGroup scopes child tasks to a lexical block, cancelling siblings and awaiting cleanup on failure. CancelledError inherits from BaseException—catching it without re-raising breaks timeouts and TaskGroups. Bound concurrency with Semaphore and offload CPU work via asyncio.to_thread.",
+          skip: "Low-level event-loop selector socket plumbing.",
+          drillA: [
+            "Implement run_bounded_batch() with asyncio.TaskGroup, Semaphore(max_concurrency), per-item asyncio.timeout, and input-order preservation.",
+            "Implement offload_blocking_digest() via asyncio.to_thread so concurrent loop heartbeats stay responsive.",
+            "Kill seeded bugs: swallowed CancelledError, unbounded fan-out, out-of-order results, and leaked tasks."
+          ],
+          drillB: [
+            "Fix AsyncToolPump: remove bare 'except BaseException', bound concurrency, and eliminate blocking time.sleep inside async coroutines."
+          ],
+          evalCmd: ".\\go.ps1 -Module m08",
+          gate5: "Snapshots asyncio.all_tasks() before/after error + cancellation to prove 0 leaked tasks and verifies active high-water mark <= max_concurrency."
+        },
+        {
+          id: "m09",
+          code: "M09",
+          navLabel: "Transactions",
+          graphTitle: "ACID & Idempotency",
+          slug: "m09_transactions_idempotency",
+          layer: "L3",
+          title: "ACID Transactions, Idempotency & Fencing",
+          shortSub: "BEGIN IMMEDIATE · replay",
+          roi: "90% Cold / 10% Spec-AI",
+          x: 214, y: 334, w: 174, h: 84,
+          prereqs: ["m05", "m06", "m08"],
+          foundation: "Default sqlite3 DEFERRED reads allow two writers to SELECT 'missing' simultaneously before colliding on INSERT. Explicit BEGIN IMMEDIATE acquires the write reservation upfront. Idempotent replay returns stored snapshots without re-running tools and rejects mutated payloads under the same request_id.",
+          skip: "ORM migration DSLs before mastering raw transactional boundaries.",
+          drillA: [
+            "Build DurableTaskLedger with WAL, isolation_level=None, and explicit BEGIN IMMEDIATE / COMMIT / ROLLBACK.",
+            "Implement submit_idempotent() with canonical JSON payload comparison and monotonic fence_token lease validation.",
+            "Kill seeded bugs: TOCTOU race without BEGIN IMMEDIATE, duplicate side-effect execution, non-canonical JSON comparison, and unguarded stale-worker overwrite."
+          ],
+          drillB: [
+            "Harden BatchOutboxRelay against mid-batch crash duplicates using atomic claim tokens and idempotent delivery records."
+          ],
+          evalCmd: ".\\go.ps1 -Module m09",
+          gate5: "8-thread concurrent contention test hammering identical request_id proves side effect runs exactly once and stale fence tokens fail."
+        },
+        {
+          id: "m10",
+          code: "M10",
+          navLabel: "Profiling & OTel",
+          graphTitle: "Profiling & Telemetry",
+          slug: "m10_packaging_profiling_otel",
+          layer: "L3",
+          title: "Packaging, Profiling & Context Telemetry",
+          shortSub: "uv · tracemalloc · ContextVar",
+          roi: "60% Cold / 40% Spec-AI",
+          x: 400, y: 334, w: 174, h: 84,
+          prereqs: ["m02", "m08"],
+          foundation: "Measure CPU/memory with cProfile and tracemalloc before optimizing. Propagate trace_id and parent_span_id across sync and concurrent asyncio tasks with contextvars.ContextVar, always resetting tokens inside finally blocks even when exceptions escape.",
+          skip: "Memorizing vendor OTLP protobuf exporter fields.",
+          drillA: [
+            "Build ContextVar-backed Tracer supporting nested sync and async spans, error attribution, and deterministic token reset.",
+            "Implement measure_allocations() using tracemalloc to capture peak KiB.",
+            "Kill seeded bugs: instance-attribute span state scrambling concurrent tasks, missing Token reset on exception, and unbounded span retention."
+          ],
+          drillB: [
+            "Profile and fix TelemetryBatchProcessor: eliminate unbounded _seen_spans leak, async trace cross-talk, and O(n^2) redaction copies."
+          ],
+          evalCmd: ".\\go.ps1 -Module m10",
+          gate5: "Runs 20 interleaved async tasks with nested spans verifying zero cross-task trace contamination and bounded heap delta."
+        },
+        {
+          id: "m11",
+          code: "M11",
+          navLabel: "Security Gates",
+          graphTitle: "Security Trust Gates",
+          slug: "m11_security_boundaries",
+          layer: "L3",
+          title: "Security & Untrusted AI/Tool Gates",
+          shortSub: "Path.resolve · SSRF · argv",
+          roi: "85% Cold / 15% Spec-AI",
+          x: 586, y: 334, w: 174, h: 84,
+          prereqs: ["m03", "m04"],
+          foundation: "str.startswith and os.path.commonprefix are bypassed by sibling prefixes (/work_evil) and symlinks; enforce Path.resolve() + is_relative_to(). Ban shell=True, parameterize SQL values + allowlist identifiers, block private/loopback/link-local SSRF IPs, and cap raw byte size before json.loads on tool/LLM outputs.",
+          skip: "Memorizing CVE IDs—enforce structural confinement at every untrusted boundary.",
+          drillA: [
+            "Implement resolve_sandbox_path() blocking '..', absolute paths, null bytes, sibling prefixes, and escaping symlinks.",
+            "Implement validate_outbound_url() blocking non-https, credentials, private/loopback/link-local/IPv6-mapped IPs, and unallowlisted hosts.",
+            "Implement parse_untrusted_tool_output() enforcing max_bytes before decoding and strict key/type schema allowlists."
+          ],
+          drillB: [
+            "Remediate 4 vulnerabilities in WorkspaceArtifactRunner: commonprefix path bypass, shell=True injection, SQL ORDER BY injection, and unbounded JSON load."
+          ],
+          evalCmd: ".\\go.ps1 -Module m11",
+          gate5: "AST scan bans shell=True, eval, exec, pickle, and commonprefix; fuzzes traversal, ::ffff:127.0.0.1 SSRF, and oversized payloads."
+        },
+        {
+          id: "m12",
+          code: "M12",
+          navLabel: "Debugging Audit",
+          graphTitle: "Debugging Capstone",
+          slug: "m12_debugging_capstone",
+          layer: "L3",
+          title: "Scientific Debugging & Audit Capstone",
+          shortSub: "trace RCA · full-stack audit",
+          roi: "90% Cold / 10% Spec-AI",
+          x: 772, y: 334, w: 162, h: 84,
+          prereqs: ["m07", "m09", "m10", "m11"],
+          foundation: "Break multi-layer debugging loops with the Scientific Method: capture trace + SQLite evidence, state a falsifiable boundary hypothesis, write a minimal deterministic reproduction test first, apply the surgical root-cause fix, and verify conservation invariants end to end.",
+          skip: "Blindly asking chat to 'fix the flaky test' without isolating a deterministic reproducer.",
+          drillA: [
+            "Diagnose and reproduce 4 interacting defects in TaskLedgerEngine: retry aliasing corruption, duplicate execution on replay, swallowed timeout cancellation, and stale worker fence overwrite.",
+            "Write 4 standalone root-cause regression tests in test_learner_a.py, then fix each defect cleanly with AI OFF."
+          ],
+          drillB: [
+            "Design strict Protocol + conservation invariants for BatchAuditReport (total == queued + leased + succeeded + failed + dead_letter, zero tenant bleed), pair with AI to implement, and audit."
+          ],
+          evalCmd: ".\\go.ps1 -Module m12",
+          gate5: "End-to-end concurrent load + fault-injection audit verifying idempotency, zero task leaks, trace integrity, and strict type cleanliness."
+        }
+      ];
+
+      const GATE_LABELS = [
+        { key: "g1", label: "Gate 1: ruff check clean" },
+        { key: "g2", label: "Gate 2: pyright --strict (0 errors)" },
+        { key: "g3", label: "Gate 3: Frozen acceptance oracle" },
+        { key: "g4", label: "Gate 4: 100% seeded-bug kill rate" },
+        { key: "g5", label: "Gate 5: Runtime invariant check" }
+      ];
+
+      function loadState() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          return raw ? JSON.parse(raw) : {};
+        } catch (_) {
+          return {};
+        }
+      }
+
+      function saveState(state) {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        } catch (_) {}
+      }
+
+      const gateState = loadState();
+      let selectedNodeId = null;
+      let activeFilter = "all";
+      let searchQuery = "";
+
+      const byId = Object.fromEntries(MODULES.map(m => [m.id, m]));
+      const dependentsMap = Object.fromEntries(MODULES.map(m => [m.id, []]));
+      MODULES.forEach(m => {
+        m.prereqs.forEach(p => dependentsMap[p].push(m.id));
+      });
+
+      function getUpstreamSet(id, acc = new Set()) {
+        const mod = byId[id];
+        if (!mod) return acc;
+        mod.prereqs.forEach(p => {
+          if (!acc.has(p)) {
+            acc.add(p);
+            getUpstreamSet(p, acc);
+          }
+        });
+        return acc;
+      }
+
+      function getDownstreamSet(id, acc = new Set()) {
+        (dependentsMap[id] || []).forEach(d => {
+          if (!acc.has(d)) {
+            acc.add(d);
+            getDownstreamSet(d, acc);
+          }
+        });
+        return acc;
+      }
+
+      function countPassedGates(modId) {
+        const st = gateState[modId] || {};
+        return GATE_LABELS.reduce((n, g) => n + (st[g.key] ? 1 : 0), 0);
+      }
+
+      function isModuleComplete(modId) {
+        return countPassedGates(modId) === GATE_LABELS.length;
+      }
+
+      function renderGraph() {
+        const edgesGroup = document.getElementById("dag-edges");
+        const nodesGroup = document.getElementById("dag-nodes");
+        edgesGroup.innerHTML = "";
+        nodesGroup.innerHTML = "";
+
+        const upstream = selectedNodeId ? getUpstreamSet(selectedNodeId) : new Set();
+        const downstream = selectedNodeId ? getDownstreamSet(selectedNodeId) : new Set();
+
+        MODULES.forEach(target => {
+          target.prereqs.forEach(srcId => {
+            const src = byId[srcId];
+            const x1 = src.x + src.w / 2;
+            const y1 = src.y + src.h;
+            const x2 = target.x + target.w / 2;
+            const y2 = target.y;
+            const midY = (y1 + y2) / 2;
+
+            const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            path.setAttribute("d", `M ${x1} ${y1} C ${x1} ${midY}, ${x2} ${midY}, ${x2} ${y2 - 2}`);
+            let cls = "dag-edge";
+            let marker = "url(#arrow-default)";
+
+            if (selectedNodeId) {
+              const inUpChain = (target.id === selectedNodeId || upstream.has(target.id)) && upstream.has(srcId);
+              const inDownChain = (srcId === selectedNodeId || downstream.has(srcId)) && downstream.has(target.id);
+              if (inUpChain) {
+                cls += " is-upstream";
+                marker = "url(#arrow-upstream)";
+              } else if (inDownChain) {
+                cls += " is-downstream";
+                marker = "url(#arrow-downstream)";
+              } else {
+                cls += " is-dimmed";
+              }
+            }
+            path.setAttribute("class", cls);
+            path.setAttribute("marker-end", marker);
+            edgesGroup.appendChild(path);
+          });
+        });
+
+        MODULES.forEach(mod => {
+          const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+          let cls = "dag-node";
+          if (isModuleComplete(mod.id)) cls += " is-complete";
+          if (selectedNodeId) {
+            if (mod.id === selectedNodeId) cls += " is-selected";
+            else if (upstream.has(mod.id)) cls += " is-upstream";
+            else if (downstream.has(mod.id)) cls += " is-downstream";
+            else cls += " is-dimmed";
+          }
+          g.setAttribute("class", cls);
+          g.setAttribute("tabindex", "0");
+          g.setAttribute("role", "button");
+          g.setAttribute("aria-label", `${mod.code}: ${mod.title}`);
+
+          const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+          rect.setAttribute("class", "node-box");
+          rect.setAttribute("x", mod.x);
+          rect.setAttribute("y", mod.y);
+          rect.setAttribute("width", mod.w);
+          rect.setAttribute("height", mod.h);
+          g.appendChild(rect);
+
+          const codeTxt = document.createElementNS("http://www.w3.org/2000/svg", "text");
+          codeTxt.setAttribute("class", "node-code");
+          codeTxt.setAttribute("x", mod.x + 11);
+          codeTxt.setAttribute("y", mod.y + 19);
+          const passed = countPassedGates(mod.id);
+          codeTxt.textContent = `${mod.code} · ${passed}/5 GATES`;
+          g.appendChild(codeTxt);
+
+          const titleTxt = document.createElementNS("http://www.w3.org/2000/svg", "text");
+          titleTxt.setAttribute("class", "node-title");
+          titleTxt.setAttribute("x", mod.x + 11);
+          titleTxt.setAttribute("y", mod.y + 38);
+          titleTxt.textContent = mod.graphTitle;
+          g.appendChild(titleTxt);
+
+          const subTxt = document.createElementNS("http://www.w3.org/2000/svg", "text");
+          subTxt.setAttribute("class", "node-sub");
+          subTxt.setAttribute("x", mod.x + 11);
+          subTxt.setAttribute("y", mod.y + 55);
+          subTxt.textContent = mod.shortSub;
+          g.appendChild(subTxt);
+
+          const activate = () => selectGraphNode(mod.id);
+          g.addEventListener("click", activate);
+          g.addEventListener("keydown", e => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              activate();
+            }
+          });
+
+          nodesGroup.appendChild(g);
+        });
+      }
+
+      function selectGraphNode(modId) {
+        selectedNodeId = selectedNodeId === modId ? null : modId;
+        renderGraph();
+        updateInspector();
+        document.querySelectorAll("article.module-section").forEach(el => {
+          el.classList.toggle("is-highlighted", el.id === selectedNodeId);
+        });
+      }
+
+      function updateInspector() {
+        const titleEl = document.getElementById("inspector-title");
+        const sumEl = document.getElementById("inspector-summary");
+        const jumpEl = document.getElementById("inspector-jump");
+
+        if (!selectedNodeId) {
+          titleEl.textContent = "Click any node in the graph to inspect its dependency chain.";
+          sumEl.innerHTML = "All 12 modules share the decoupled <code>taskledger</code> domain so you can run M01&rarr;M12 sequentially or target specific weak spots.";
+          jumpEl.href = "#m01";
+          jumpEl.textContent = "Jump to M01 Lab";
+          return;
+        }
+
+        const mod = byId[selectedNodeId];
+        const up = Array.from(getUpstreamSet(selectedNodeId)).map(id => byId[id].code);
+        const down = Array.from(getDownstreamSet(selectedNodeId)).map(id => byId[id].code);
+
+        titleEl.textContent = `${mod.code} — ${mod.title} (${mod.roi})`;
+        const upText = up.length ? `Prerequisites: ${up.join(", ")}` : "Prerequisites: None (Root foundation)";
+        const downText = down.length ? `Unlocks: ${down.join(", ")}` : "Unlocks: Terminal capstone";
+        sumEl.textContent = `${upText}  |  ${downText}`;
+        jumpEl.href = `#${mod.id}`;
+        jumpEl.textContent = `Open ${mod.code} Guide`;
+      }
+
+      function escapeHtml(str) {
+        return str
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      function renderModulesAndNav() {
+        const navContainer = document.getElementById("sidebar-module-nav");
+        const cardsContainer = document.getElementById("module-cards-container");
+        navContainer.innerHTML = "";
+        cardsContainer.innerHTML = "";
+
+        let totalPassed = 0;
+        let visibleCount = 0;
+
+        MODULES.forEach(mod => {
+          const passed = countPassedGates(mod.id);
+          totalPassed += passed;
+          const complete = passed === GATE_LABELS.length;
+
+          // Sidebar item
+          const li = document.createElement("li");
+          const a = document.createElement("a");
+          a.className = "nav-link";
+          a.href = `#${mod.id}`;
+          a.innerHTML = `<span><strong>${mod.code}</strong> &middot; ${escapeHtml(mod.navLabel)}</span><span class="nav-gate-pill ${complete ? "is-complete" : ""}">${passed}/5</span>`;
+          li.appendChild(a);
+          navContainer.appendChild(li);
+
+          // Check filter + search
+          const matchesLayer =
+            activeFilter === "all" ||
+            (activeFilter === "remaining" && !complete) ||
+            mod.layer === activeFilter;
+
+          const haystack = [
+            mod.code, mod.slug, mod.title, mod.foundation, mod.skip,
+            ...mod.drillA, ...mod.drillB, mod.gate5
+          ].join(" ").toLowerCase();
+          const matchesSearch = !searchQuery || haystack.includes(searchQuery);
+
+          if (!matchesLayer || !matchesSearch) return;
+          visibleCount += 1;
+
+          const article = document.createElement("article");
+          article.className = "module-section" + (selectedNodeId === mod.id ? " is-highlighted" : "");
+          article.id = mod.id;
+
+          const prereqBadges = mod.prereqs.length
+            ? `Prerequisites: ${mod.prereqs.map(p => byId[p].code).join(", ")}`
+            : "Root Module (No prerequisites)";
+
+          const drillAList = mod.drillA.map(item => `<li>${escapeHtml(item)}</li>`).join("");
+          const drillBList = mod.drillB.map(item => `<li>${escapeHtml(item)}</li>`).join("");
+
+          const modGates = gateState[mod.id] || {};
+          const gatesHtml = GATE_LABELS.map(g => {
+            const checked = Boolean(modGates[g.key]);
+            return `
+              <label class="gate-item ${checked ? "is-checked" : ""}">
+                <input type="checkbox" data-mod="${mod.id}" data-gate="${g.key}" ${checked ? "checked" : ""}>
+                <span>${escapeHtml(g.label)}</span>
+              </label>
+            `;
+          }).join("");
+
+          article.innerHTML = `
+            <div class="module-top">
+              <div>
+                <h3 class="module-heading">${mod.code} &middot; ${escapeHtml(mod.title)}</h3>
+                <div class="module-meta-row">
+                  <span class="tag">labs/${mod.slug}</span>
+                  <span class="tag">${mod.layer}</span>
+                  <span class="roi-badge">${escapeHtml(mod.roi)}</span>
+                  <span class="tag">${escapeHtml(prereqBadges)}</span>
+                </div>
+              </div>
+              <button type="button" class="btn trace-in-graph-btn" data-mod="${mod.id}">Trace in Graph</button>
+            </div>
+
+            <div class="phase-pane" style="margin-bottom: 1rem;">
+              <h4>
+                <span>Foundation &amp; AI Failure Mode</span>
+                <span class="phase-time">10 mins &middot; Read Before Coding</span>
+              </h4>
+              <p>${escapeHtml(mod.foundation)}</p>
+              <p style="margin-bottom:0;"><strong>Deprioritize memorizing:</strong> ${escapeHtml(mod.skip)}</p>
+            </div>
+
+            <div class="module-grid">
+              <div class="phase-pane">
+                <h4>
+                  <span>Drill A &middot; Cold-Turkey Core (AI OFF)</span>
+                  <span class="phase-time">35 mins &middot; drill_a_core.py</span>
+                </h4>
+                <ul>${drillAList}</ul>
+              </div>
+              <div class="phase-pane">
+                <h4>
+                  <span>Drill B &middot; Spec-First AI Pair &amp; Audit</span>
+                  <span class="phase-time">25 mins &middot; drill_b_ai_adapter.py</span>
+                </h4>
+                <ul>${drillBList}</ul>
+              </div>
+            </div>
+
+            <div class="eval-box">
+              <div class="eval-header">
+                <h4>Step-by-Step 5-Stage Evaluation Gate (15 mins)</h4>
+                <div class="cmd-group">
+                  <code>${escapeHtml(mod.evalCmd)}</code>
+                  <button type="button" class="btn copy-cmd-btn" data-cmd="${escapeHtml(mod.evalCmd)}">Copy Command</button>
+                </div>
+              </div>
+              <p style="font-size:0.8125rem; color:var(--ink-secondary); margin-bottom:0.5rem;">
+                <strong>Gate 5 Runtime Invariant:</strong> ${escapeHtml(mod.gate5)}
+              </p>
+              <div class="gate-checklist">${gatesHtml}</div>
+            </div>
+          `;
+
+          cardsContainer.appendChild(article);
+        });
+
+        document.getElementById("empty-filter-state").classList.toggle("is-visible", visibleCount === 0);
+
+        const ratio = Math.min(1, Math.max(0, totalPassed / 60));
+        document.getElementById("overall-progress-label").textContent = `${totalPassed} / 60 passed`;
+        document.getElementById("overall-progress-fill").style.transform = `scaleX(${ratio})`;
+        document.getElementById("overall-progressbar").setAttribute("aria-valuenow", String(totalPassed));
+      }
+
+      document.addEventListener("change", e => {
+        const target = e.target;
+        if (target && target.matches("input[type='checkbox'][data-mod]")) {
+          const modId = target.getAttribute("data-mod");
+          const gateKey = target.getAttribute("data-gate");
+          if (!gateState[modId]) gateState[modId] = {};
+          gateState[modId][gateKey] = target.checked;
+          saveState(gateState);
+          renderGraph();
+          renderModulesAndNav();
+        }
+      });
+
+      document.addEventListener("click", e => {
+        const copyBtn = e.target.closest(".copy-cmd-btn");
+        if (copyBtn) {
+          const cmd = copyBtn.getAttribute("data-cmd");
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(cmd).then(() => {
+              const prev = copyBtn.textContent;
+              copyBtn.textContent = "Copied";
+              setTimeout(() => { copyBtn.textContent = prev; }, 1400);
+            });
+          }
+          return;
+        }
+
+        const traceBtn = e.target.closest(".trace-in-graph-btn");
+        if (traceBtn) {
+          const modId = traceBtn.getAttribute("data-mod");
+          selectedNodeId = modId;
+          renderGraph();
+          updateInspector();
+          document.getElementById("learning-graph").scrollIntoView({ behavior: "smooth" });
+        }
+      });
+
+      document.getElementById("reset-graph-btn").addEventListener("click", () => {
+        selectedNodeId = null;
+        renderGraph();
+        updateInspector();
+        document.querySelectorAll("article.module-section").forEach(el => el.classList.remove("is-highlighted"));
+      });
+
+      document.querySelectorAll(".filter-chip").forEach(btn => {
+        btn.addEventListener("click", () => {
+          activeFilter = btn.getAttribute("data-filter");
+          document.querySelectorAll(".filter-chip").forEach(b => {
+            b.setAttribute("aria-pressed", String(b === btn));
+          });
+          renderModulesAndNav();
+        });
+      });
+
+      document.getElementById("module-search").addEventListener("input", e => {
+        searchQuery = e.target.value.trim().toLowerCase();
+        renderModulesAndNav();
+      });
+
+      document.getElementById("clear-filters-btn").addEventListener("click", () => {
+        activeFilter = "all";
+        searchQuery = "";
+        document.getElementById("module-search").value = "";
+        document.querySelectorAll(".filter-chip").forEach(b => {
+          b.setAttribute("aria-pressed", String(b.getAttribute("data-filter") === "all"));
+        });
+        renderModulesAndNav();
+      });
+
+      renderGraph();
+      updateInspector();
+      renderModulesAndNav();
+    })();
+  </script>
+</body>
+</html>

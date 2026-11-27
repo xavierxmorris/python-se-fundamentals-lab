@@ -1,0 +1,59 @@
+{
+  "folders": [
+    {
+      "name": "Python SE Fundamentals Lab",
+      "path": "."
+    }
+  ],
+  "settings": {
+    "python.defaultInterpreterPath": "${workspaceFolder}/.venv/Scripts/python.exe",
+    "python.analysis.typeCheckingMode": "strict",
+    "python.testing.pytestEnabled": true,
+    "python.testing.unittestEnabled": false,
+    "search.exclude": {
+      "**/solutions/**": true,
+      "**/.venv/**": true
+    }
+  },
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Evaluate M01 (Gates 1-5)",
+        "type": "shell",
+        "command": "powershell",
+        "args": [
+          "-NoProfile",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-File",
+          "${workspaceFolder}/go.ps1",
+          "-Module",
+          "m01"
+        ],
+        "group": {
+          "kind": "test",
+          "isDefault": true
+        },
+        "presentation": {
+          "reveal": "always",
+          "panel": "shared"
+        }
+      },
+      {
+        "label": "Check Full Lab & All 12 Reference Solutions",
+        "type": "shell",
+        "command": "powershell",
+        "args": [
+          "-NoProfile",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-File",
+          "${workspaceFolder}/go.ps1",
+          "-Check"
+        ],
+        "group": "test"
+      }
+    ]
+  }
+}

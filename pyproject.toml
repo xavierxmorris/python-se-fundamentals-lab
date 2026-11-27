@@ -1,0 +1,60 @@
+[project]
+name = "python-se-fundamentals-lab"
+version = "0.1.0"
+description = "12-module hands-on Python 3.14 & Software Engineering fundamentals lab (TaskLedger spine) with Cold-Turkey Core drills, Spec-First AI Pairing, and 5-Stage Evaluation Gates."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "hypothesis>=6.100",
+    "pyright>=1.1.390",
+    "pytest>=8.0",
+    "ruff>=0.9",
+]
+
+[tool.pytest.ini_options]
+addopts = "-q --tb=short"
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM"]
+ignore = ["E501"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["drill_a_core", "drill_b_ai_adapter", "seeded_bugs_a", "runtime_check"]
+
+[tool.pyright]
+pythonVersion = "3.14"
+typeCheckingMode = "strict"
+reportMissingTypeStubs = false
+executionEnvironments = [
+    { root = "labs/m01_object_model" },
+    { root = "labs/m02_collections_complexity" },
+    { root = "labs/m03_domain_invariants" },
+    { root = "labs/m04_static_typing" },
+    { root = "labs/m05_lifecycles_generators" },
+    { root = "labs/m06_modular_architecture" },
+    { root = "labs/m07_verification_harnesses" },
+    { root = "labs/m08_structured_concurrency" },
+    { root = "labs/m09_transactions_idempotency" },
+    { root = "labs/m10_packaging_profiling_otel" },
+    { root = "labs/m11_security_boundaries" },
+    { root = "labs/m12_debugging_capstone" },
+    { root = "solutions/m01_object_model" },
+    { root = "solutions/m02_collections_complexity" },
+    { root = "solutions/m03_domain_invariants" },
+    { root = "solutions/m04_static_typing" },
+    { root = "solutions/m05_lifecycles_generators" },
+    { root = "solutions/m06_modular_architecture" },
+    { root = "solutions/m07_verification_harnesses" },
+    { root = "solutions/m08_structured_concurrency" },
+    { root = "solutions/m09_transactions_idempotency" },
+    { root = "solutions/m10_packaging_profiling_otel" },
+    { root = "solutions/m11_security_boundaries" },
+    { root = "solutions/m12_debugging_capstone" },
+]
